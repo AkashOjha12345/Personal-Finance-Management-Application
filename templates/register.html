@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Personal Finance Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background particles */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+            z-index: 1;
+            animation: slideIn 0.5s ease-out;
+            transition: transform 0.3s ease;
+        }
+
+        .register-container:hover {
+            transform: translateY(-5px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .register-header h1 {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .register-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .form-group:focus-within label {
+            color: #667eea;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 45px 14px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #667eea;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+            transition: transform 0.2s ease;
+            z-index: 2;
+        }
+
+        .password-toggle:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #c33;
+            animation: shake 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #28a745;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            border-left: 4px solid #28a745;
+            animation: slideDown 0.5s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-message::before {
+            content: '⚠';
+            font-size: 18px;
+        }
+
+        .success-message::before {
+            content: '✓';
+            font-size: 18px;
+        }
+
+        .register-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .register-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .register-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .register-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .register-button:active {
+            transform: translateY(0);
+        }
+
+        .register-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .register-button.loading {
+            pointer-events: none;
+        }
+
+        .register-button.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .password-strength.weak .password-strength-bar {
+            width: 33%;
+            background: #dc3545;
+        }
+
+        .password-strength.medium .password-strength-bar {
+            width: 66%;
+            background: #ffc107;
+        }
+
+        .password-strength.strong .password-strength-bar {
+            width: 100%;
+            background: #28a745;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .login-link a:hover {
+            color: #764ba2;
+            transform: translateX(-5px);
+        }
+
+        .login-link a::before {
+            content: '← ';
+            transition: transform 0.3s ease;
+        }
+
+        .login-link a:hover::before {
+            transform: translateX(-5px);
+        }
+
+        .input-feedback {
+            margin-top: 5px;
+            font-size: 12px;
+            min-height: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .input-feedback.valid {
+            color: #28a745;
+        }
+
+        .input-feedback.invalid {
+            color: #dc3545;
+        }
+
+        .match-indicator {
+            display: inline-block;
+            margin-left: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 30px 20px;
+            }
+
+            .register-header h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Join us to start managing your finances</p>
+        </div>
+
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% if success %}
+        <div class="success-message">
+            {{ success }}
+        </div>
+        <script>
+            setTimeout(function() {
+                window.location.href = '/';
+            }, 2000);
+        </script>
+        {% endif %}
+
+        <form method="post" id="registerForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="Choose a username" 
+                        required
+                        autocomplete="username"
+                    >
+                    <span class="input-icon">👤</span>
+                </div>
+                <div class="input-feedback" id="username-feedback"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Create a password" 
+                        required
+                        autocomplete="new-password"
+                    >
+                    <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
+                        👁️
+                    </button>
+                </div>
+                <div class="password-strength" id="passwordStrength">
+                    <div class="password-strength-bar"></div>
+                </div>
+                <div class="input-feedback" id="password-feedback"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="password" 
+                        id="confirm_password" 
+                        name="confirm_password" 
+                        placeholder="Confirm your password" 
+                        required
+                        autocomplete="new-password"
+                    >
+                    <button type="button" class="password-toggle" id="confirmPasswordToggle" aria-label="Toggle password visibility">
+                        👁️
+                    </button>
+                </div>
+                <div class="input-feedback" id="confirm-password-feedback"></div>
+            </div>
+
+            <button type="submit" class="register-button" id="registerButton">
+                <span id="buttonText">Create Account</span>
+            </button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <div class="login-link">
+            <p>Already have an account? <a href="/">Sign in here</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Password visibility toggles
+        const passwordToggle = document.getElementById('passwordToggle');
+        const confirmPasswordToggle = document.getElementById('confirmPasswordToggle');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        confirmPasswordToggle.addEventListener('click', function() {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+
+        // Form validation
+        const usernameInput = document.getElementById('username');
+        const registerForm = document.getElementById('registerForm');
+        const registerButton = document.getElementById('registerButton');
+        const buttonText = document.getElementById('buttonText');
+
+        // Username validation
+        usernameInput.addEventListener('input', function() {
+            const value = this.value.trim();
+            const feedback = document.getElementById('username-feedback');
+            
+            if (value.length === 0) {
+                feedback.textContent = '';
+                feedback.className = 'input-feedback';
+            } else if (value.length < 3) {
+                feedback.textContent = 'Username must be at least 3 characters';
+                feedback.className = 'input-feedback invalid';
+            } else if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+                feedback.textContent = 'Username can only contain letters, numbers, and underscores';
+                feedback.className = 'input-feedback invalid';
+            } else {
+                feedback.textContent = '✓ Looks good';
+                feedback.className = 'input-feedback valid';
+            }
+        });
+
+        // Password strength indicator
+        passwordInput.addEventListener('input', function() {
+            const value = this.value;
+            const feedback = document.getElementById('password-feedback');
+            const strengthBar = document.getElementById('passwordStrength');
+            
+            if (value.length === 0) {
+                feedback.textContent = '';
+                feedback.className = 'input-feedback';
+                strengthBar.className = 'password-strength';
+            } else if (value.length < 4) {
+                feedback.textContent = 'Password must be at least 4 characters';
+                feedback.className = 'input-feedback invalid';
+                strengthBar.className = 'password-strength';
+            } else if (value.length < 6) {
+                feedback.textContent = 'Password is weak';
+                feedback.className = 'input-feedback invalid';
+                strengthBar.className = 'password-strength weak';
+            } else if (value.length < 8 || !/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+                feedback.textContent = 'Password is medium strength';
+                feedback.className = 'input-feedback';
+                strengthBar.className = 'password-strength medium';
+            } else {
+                feedback.textContent = '✓ Strong password';
+                feedback.className = 'input-feedback valid';
+                strengthBar.className = 'password-strength strong';
+            }
+            
+            // Check password match if confirm password has value
+            if (confirmPasswordInput.value.length > 0) {
+                checkPasswordMatch();
+            }
+        });
+
+        // Confirm password validation
+        confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const feedback = document.getElementById('confirm-password-feedback');
+            
+            if (confirmPassword.length === 0) {
+                feedback.textContent = '';
+                feedback.className = 'input-feedback';
+            } else if (password !== confirmPassword) {
+                feedback.textContent = '✗ Passwords do not match';
+                feedback.className = 'input-feedback invalid';
+            } else {
+                feedback.textContent = '✓ Passwords match';
+                feedback.className = 'input-feedback valid';
+            }
+        }
+
+        // Form submission with validation
+        registerForm.addEventListener('submit', function(e) {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            // Validate all fields
+            if (username.length < 3) {
+                e.preventDefault();
+                usernameInput.focus();
+                return false;
+            }
+
+            if (password.length < 4) {
+                e.preventDefault();
+                passwordInput.focus();
+                return false;
+            }
+
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                confirmPasswordInput.focus();
+                return false;
+            }
+
+            // Show loading state
+            registerButton.classList.add('loading');
+            registerButton.disabled = true;
+            buttonText.textContent = 'Creating account...';
+        });
+
+        // Add focus animations
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add enter key animation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && document.activeElement.tagName === 'INPUT') {
+                const activeInput = document.activeElement;
+                activeInput.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    activeInput.style.transform = 'scale(1)';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>
+

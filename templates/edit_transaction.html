@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Transaction - Personal Finance Manager</title>
+    <title>Edit Transaction - Personal Finance Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         * {
@@ -166,45 +166,12 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
-
-        .category-suggestions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .category-chip {
-            padding: 8px 16px;
-            background: #f0f0f0;
-            border-radius: 20px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .category-chip:hover {
-            background: #667eea;
-            color: white;
-            transform: scale(1.05);
-        }
-
-        .category-chip.income {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-        }
-
-        .category-chip.expense {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>➕ Add Transaction</h1>
+            <h1>✏️ Edit Transaction</h1>
             <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
         </div>
 
@@ -213,63 +180,37 @@
                 <div class="form-group">
                     <label for="type">Transaction Type *</label>
                     <select name="type" id="type" required>
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
+                        <option value="income" {% if transaction[1] == 'income' %}selected{% endif %}>Income</option>
+                        <option value="expense" {% if transaction[1] == 'expense' %}selected{% endif %}>Expense</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="category">Category *</label>
-                    <input type="text" name="category" id="category" placeholder="e.g., Salary, Food, Rent" required>
-                    <div class="category-suggestions" id="categorySuggestions"></div>
+                    <input type="text" name="category" id="category" value="{{ transaction[2] }}" required>
                 </div>
 
                 <div class="form-group">
                     <label for="amount">Amount (₹) *</label>
-                    <input type="number" name="amount" id="amount" step="0.01" min="0" placeholder="0.00" required>
+                    <input type="number" name="amount" id="amount" step="0.01" min="0" value="{{ transaction[3] }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date">Date *</label>
+                    <input type="date" name="date" id="date" value="{{ transaction[4] }}" required>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <input type="text" name="description" id="description" placeholder="Optional description">
+                    <input type="text" name="description" id="description" value="{{ transaction[5] or '' }}">
                 </div>
 
-                <button type="submit" class="btn-primary">Add Transaction</button>
+                <button type="submit" class="btn-primary">Update Transaction</button>
             </form>
         </div>
     </div>
 
     <script>
-        const typeSelect = document.getElementById('type');
-        const categoryInput = document.getElementById('category');
-        const suggestionsDiv = document.getElementById('categorySuggestions');
-
-        const categories = {
-            income: ['Salary', 'Freelance', 'Investment', 'Gift', 'Bonus', 'Other Income'],
-            expense: ['Food', 'Rent', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Healthcare', 'Education', 'Other Expense']
-        };
-
-        function updateSuggestions() {
-            const type = typeSelect.value;
-            const suggestions = categories[type];
-            suggestionsDiv.innerHTML = '';
-            
-            suggestions.forEach(cat => {
-                const chip = document.createElement('div');
-                chip.className = `category-chip ${type}`;
-                chip.textContent = cat;
-                chip.onclick = () => {
-                    categoryInput.value = cat;
-                    suggestionsDiv.innerHTML = '';
-                };
-                suggestionsDiv.appendChild(chip);
-            });
-        }
-
-        typeSelect.addEventListener('change', updateSuggestions);
-        updateSuggestions();
-
-        // Form validation
         document.getElementById('transactionForm').addEventListener('submit', function(e) {
             const amount = parseFloat(document.getElementById('amount').value);
             if (amount <= 0) {
@@ -281,3 +222,4 @@
     </script>
 </body>
 </html>
+

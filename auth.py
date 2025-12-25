@@ -14,9 +14,12 @@ def register_user(username, password):
         )
         conn.commit()
         print("✅ Registration successful")
+        conn.close()
+        return True
     except sqlite3.IntegrityError:
         print("❌ Username already exists")
-    conn.close()
+        conn.close()
+        return False
 
 def login_user(username, password):
     conn = sqlite3.connect("finance.db")
