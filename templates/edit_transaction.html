@@ -1,225 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction - Personal Finance Manager</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Edit Transaction</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
             box-sizing: border-box;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: moveBackground 20s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes moveBackground {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: slideDown 0.5s ease-out;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .header h1 {
-            color: #667eea;
-            font-size: 28px;
-            font-weight: 700;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
-
-        .form-container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        .form-group label {
-            display: block;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .form-group select,
-        .form-group input {
+        button {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-            outline: none;
-        }
-
-        .form-group select:focus,
-        .form-group input:focus {
-            border-color: #667eea;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 3px;
             cursor: pointer;
-            transition: all 0.3s ease;
             margin-top: 10px;
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        button:hover {
+            background-color: #45a049;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>✏️ Edit Transaction</h1>
-            <a href="/dashboard" class="btn btn-secondary">← Back to Dashboard</a>
-        </div>
-
-        <div class="form-container">
-            <form method="post" id="transactionForm">
-                <div class="form-group">
-                    <label for="type">Transaction Type *</label>
-                    <select name="type" id="type" required>
-                        <option value="income" {% if transaction[1] == 'income' %}selected{% endif %}>Income</option>
-                        <option value="expense" {% if transaction[1] == 'expense' %}selected{% endif %}>Expense</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="category">Category *</label>
-                    <input type="text" name="category" id="category" value="{{ transaction[2] }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="amount">Amount (₹) *</label>
-                    <input type="number" name="amount" id="amount" step="0.01" min="0" value="{{ transaction[3] }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="date">Date *</label>
-                    <input type="date" name="date" id="date" value="{{ transaction[4] }}" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input type="text" name="description" id="description" value="{{ transaction[5] or '' }}">
-                </div>
-
-                <button type="submit" class="btn-primary">Update Transaction</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('transactionForm').addEventListener('submit', function(e) {
-            const amount = parseFloat(document.getElementById('amount').value);
-            if (amount <= 0) {
-                e.preventDefault();
-                alert('Amount must be greater than 0');
-                return false;
-            }
-        });
-    </script>
+    <h2>Edit Transaction</h2>
+    <form method="post">
+        <select name="type" required>
+            <option value="income" {% if transaction[1] == 'income' %}selected{% endif %}>Income</option>
+            <option value="expense" {% if transaction[1] == 'expense' %}selected{% endif %}>Expense</option>
+        </select>
+        <input type="text" name="category" value="{{ transaction[2] }}" required>
+        <input type="number" name="amount" step="0.01" value="{{ transaction[3] }}" required>
+        <input type="text" name="description" value="{{ transaction[5] or '' }}">
+        <button type="submit">Update Transaction</button>
+    </form>
+    <p><a href="/dashboard">Back to Dashboard</a></p>
 </body>
 </html>
-
